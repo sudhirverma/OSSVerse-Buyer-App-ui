@@ -1,0 +1,25 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+:root {
+  font-size: 16px;
+}
+
+.page-root {
+  @apply p-4 sm:p-5 md:p-[4.5rem] xl:px-[72px];
+}
+
+.section-gap {
+  @apply mt-7;
+}
+
+.section-gap-sm {
+  @apply mt-4;
+}
+
+.section-gap-lg {
+  @apply mt-8;
+}
+
+.font-inter {
+  font-family: "Inter", sans-serif;
+}
