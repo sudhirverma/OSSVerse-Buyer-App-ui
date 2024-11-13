@@ -49,10 +49,14 @@ const TabItem = ({
 };
 
 const MarketPlacePage = ({ isHomePage = false }: { isHomePage?: boolean }) => {
+
+
   // const { data, isLoading } = useMarketPlaceProducts("", "OSS Project");
   // const { modalData, isLoading: isModalLoading } = useMarketPlaceProducts("", "OSS Model");
 
   const [searchParams, setSearchParams] = useSearchParams();
+
+
   const showFilter = searchParams.get("filter") || "";
   const activeTab = searchParams.get("q") || "";
   const selectedCategory = {
@@ -63,6 +67,7 @@ const MarketPlacePage = ({ isHomePage = false }: { isHomePage?: boolean }) => {
     "",
     selectedCategory[activeTab as keyof typeof selectedCategory] ?? "",
   );
+
 
   const onChange = (value: string) => {
     if (value === "") {
@@ -80,6 +85,7 @@ const MarketPlacePage = ({ isHomePage = false }: { isHomePage?: boolean }) => {
     }
     setSearchParams(searchParams);
   };
+
 
   const [isGrid, setIsGrid] = useState(false);
   return (
