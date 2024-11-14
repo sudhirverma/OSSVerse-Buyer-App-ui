@@ -16,10 +16,11 @@ Buyer app
 5. Run `pnpm spellcheck` to check typo
 
 ### Setup with docker
-
-    Build docker image with provided Dockerfile within project docker build -t sellerapp .
-    Run docker image in a container docker run -d --name sellerapp -p 80:80 sellerapp
-    Application will be online on http://localhost:80
+1. Build docker image with provided Dockerfile within project
+ ```docker build -t buyerapp .```
+2. Run docker image in a container
+ ```docker run -d --name buyerapp -p 80:80 buyerapp```
+3. Application will be online on http://localhost:80
 
 
 ### Utilities
