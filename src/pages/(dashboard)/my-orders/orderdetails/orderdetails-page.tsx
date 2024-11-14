@@ -81,6 +81,7 @@ const order = {
 };
 
 const OrderDetailsPage = () => {
+  console.log("OrderDetailsPage");
   const [currentAnchor, setCurrentAnchor] = useState(0);
   const [stages, setStages] = useState<StageItem[]>([
     {
@@ -113,7 +114,7 @@ const OrderDetailsPage = () => {
 
   useEffect(() => {
     if (data && id) {
-      const response = data?.orders[0]?.orders[0]?.message.responses.find(
+      const response = data?.[0]?.orders[0]?.message.responses.find(
         (response) => response.message.order.id === id,
       );
       setOrderDetails(response?.message.order ?? ({} as OrderDetailsType));
