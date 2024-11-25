@@ -17,6 +17,7 @@ import NotificationButton from "@/components/common/notification-button";
 import useAuthStore from "@/store/auth-store";
 import { useModal } from "@/store/modal-store";
 import LoginNavbar from "./login-navbar";
+import { ROUTE_PATH } from "@/routes/route-path";
 
 const items = [
   {
@@ -62,6 +63,9 @@ const NavBar = () => {
     useAuthStore((state) => state);
   const { onOpen, onClose } = useModal();
   const location = useLocation();
+
+  const availableRoutes = Object.values(ROUTE_PATH);
+
   return (
     <>
       {openLoginNavbar && (
@@ -76,15 +80,23 @@ const NavBar = () => {
             <Logo />
           </Link>
 
-          {items.map((item) => (
-            <Link
-              to={item.href}
-              key={item.id}
-              className={`p-2 transition-colors text-foreground hover:text-accent-foreground ${item.href === location.pathname ? "font-bold" : ""} ${item.isProtected && !isAuthenticated ? "hidden" : ""}`}
-            >
-              {item.name}
-            </Link>
-          ))}
+          {items.map((item) => {
+            const isRouteAvailable = availableRoutes.includes(item.href);
+            return (
+              <Link
+                to={isRouteAvailable ? item.href : "#"}
+                key={item.id}
+                className={`p-2 transition-colors text-foreground ${isRouteAvailable
+                    ? "hover:text-accent-foreground"
+                    : "text-gray-400 cursor-not-allowed"
+                  } ${item.href === location.pathname ? "font-bold" : ""
+                  } ${item.isProtected && !isAuthenticated ? "hidden" : ""
+                  }`}
+                aria-disabled={!isRouteAvailable}>
+                {item.name}
+              </Link>
+            )
+          })}
         </nav>
         <Sheet>
           <SheetTrigger asChild>
@@ -117,16 +129,16 @@ const NavBar = () => {
             </nav>
           </SheetContent>
         </Sheet>
-          <form className="ml-0 mr-auto hidden xl:block flex-1 sm:flex-initial">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Global search..."
-                className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
-              />
-            </div>
-          </form>
+        <form className="ml-0 mr-auto hidden xl:block flex-1 sm:flex-initial">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Global search..."
+              className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
+            />
+          </div>
+        </form>
         <div className="flex  items-center gap-4 md:ml-auto md:gap-2 lg:gap-4 ">
           <Search className="h-10 w-10 p-2 text-muted-foreground xl:hidden border rounded" />
 
@@ -139,7 +151,7 @@ const NavBar = () => {
           {!isAuthenticated && (
             <>
               <Button>Book A Demo</Button>
-              <Button>Get Started</Button>
+              {/* <Button>Get Started</Button> */}
               {/* divider */}
               <div className="h-6 w-[1px] bg-gray-400" />
             </>
