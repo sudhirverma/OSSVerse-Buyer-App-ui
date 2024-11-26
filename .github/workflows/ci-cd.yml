@@ -1,0 +1,46 @@
+name: CI/CD Pipeline
+
+on:
+  push: # Trigger on any branch push
+    branches:
+      - '**'
+  pull_request: # Trigger on any branch pull request
+    branches:
+      - '**'
+
+jobs:
+  ci:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up Node.js (latest stable version)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20' # Adjust if you need a specific version like 22 when available
+          cache: 'pnpm'
+
+      # Install pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: pnpm install
+
+      # Lint the code
+      - name: Run Linter
+        run: pnpm lint
+
+      # Run tests with coverage
+      - name: Run Tests
+        run: pnpm coverage
+
+      # Build the project
+      - name: Build Project
+        run: pnpm build
