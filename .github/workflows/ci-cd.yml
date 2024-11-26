@@ -9,9 +9,12 @@ on:
       - '**'
 
 jobs:
-  ci:
-    name: Continuous Integration
-    runs-on: ubuntu-latest
+   build:
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, 'windows-latest']
 
     steps:
       # Checkout code
@@ -22,7 +25,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20' # Adjust if you need a specific version like 22 when available
+          node-version: 'lts'
           cache: 'pnpm'
 
       # Install pnpm
