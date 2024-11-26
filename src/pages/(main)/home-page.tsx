@@ -93,11 +93,11 @@ const HomePage: FC = () => {
           </Typography>
           <div className="flex gap-4">
             <Button type="button">Get Started</Button>
-            <Link to={ROUTE_PATH.MARKETPLACE}>
+            {/* <Link to={ROUTE_PATH.MARKETPLACE}>
               <Button className=" flex gap-1" type="button">
                 Explore Marketplace <ExternalLink className=" h-4 w-4" />
               </Button>
-            </Link>
+            </Link> */}
           </div>
         </div>
         <img

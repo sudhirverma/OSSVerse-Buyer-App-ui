@@ -10,7 +10,7 @@ import { Search } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import MyOrdersList from "../components/my-orders-list";
 import { useEffect, useState } from "react";
-import { useMyOrders } from "@/services/myorders-service";
+import { type OrderResponse, useMyOrders } from "@/services/myorders-service";
 import SortMenu from "../components/sort-menu";
 import { type FinalProduct, deriveData, getSpanVariant } from "@/lib/utils";
 import type { IFilterSortPager } from "@/store/data-store";
@@ -54,6 +54,25 @@ const TabItem = ({
 };
 
 const MyOrdersPage = () => {
+  const { data, isLoading: _ } = useMyOrders();
+  const [orders, setOrders] = useState<OrderResponse['orders'] | null>(null);
+
+
+  useEffect(() => {
+    if (data) {
+      setOrders(data);
+    }
+  }, [data]);
+
+
+  if (_) { return <div>Loading...</div> }
+  if (!data) { return <div>No data</div> }
+  return orders && <OrdersPage data={orders} />;
+
+}
+
+const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
+
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("q") || "All";
 
@@ -98,21 +117,19 @@ const MyOrdersPage = () => {
     setIsGrid(value);
   };
 
-  const { data, isLoading: _ } = useMyOrders();
 
-  const tabsData =
-    (data?.orders?.slice() || []).map((order) => {
-      const { items, state } =
-        order.orders[0].message.responses[0].message.order;
-      return {
-        state,
-        count: items.length,
-        value: state,
-      };
-    }) || [];
+  const tabsData = data?.map((order) => {
+    const { items, state } =
+      order.orders[0].message.responses[0].message.order;
+    return {
+      state,
+      count: items.length,
+      value: state,
+    };
+  }) || [];
 
   const listData =
-    (data?.orders?.slice() || []).flatMap((order) => {
+    data?.map((order) => {
       const { items, id, updated_at, created_at, state } =
         order.orders[0].message.responses[0].message.order;
       return items.map((item) => {
@@ -157,6 +174,7 @@ const MyOrdersPage = () => {
       if (activeTab === "All") {
         d = listData.flat();
       } else {
+        //@ts-ignore
         d = listData.filter((d) => d.state === activeTab);
       }
       const { currentData, finalTotalCount } = deriveData(
@@ -208,7 +226,9 @@ const MyOrdersPage = () => {
       <div className="flex flex-col-reverse  md:flex-row  justify-between gap-4 items-center  flex-wrap lg:flex-nowrap">
         <Tabs onValueChange={onChange} value={activeTab} className="w-full">
           <TabsList className="bg-transparent gap-0 md:gap-4">
-            {tabsDataArr?.map((tab) => (
+            {Array.from(
+              new Map(tabsData.map(item => [item.state, item])).values()
+            ).map((tab) => (
               <TabItem
                 key={tab.state}
                 title={tab.state}
@@ -254,7 +274,7 @@ const MyOrdersPage = () => {
           <MyOrdersList
             setFilterSortPager={setFilterSortPager}
             filterSortPager={filterSortPager}
-            orders={currentData || []}
+            orders={data || []}
             showFilter={!!showFilter}
             showGrid={!!isGrid}
           />
