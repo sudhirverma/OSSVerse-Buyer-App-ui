@@ -48,3 +48,7 @@ jobs:
       # Build the project
       - name: Build Project
         run: pnpm build
+
+      - name: Upload Coverage to Codecov
+        if: matrix.os == 'ubuntu-latest'
+        uses: codecov/codecov-action@v4
