@@ -1,12 +1,14 @@
 name: CI/CD Pipeline
 
 on:
-  push: # Trigger on any branch push
+  push: 
     branches:
-      - '**'
-  pull_request: # Trigger on any branch pull request
+      - 'develop'
+      - 'main'
+  pull_request:
     branches:
-      - '**'
+      - 'develop'
+      - 'main'
 
 jobs:
    build:
