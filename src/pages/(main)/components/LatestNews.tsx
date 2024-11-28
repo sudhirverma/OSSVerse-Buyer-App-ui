@@ -29,7 +29,7 @@ const LatestNewsComp = () => {
                         comprehensive solutions for every stage of the AI pipeline.
                     </div>
                     <div>
-                        <Button>Learn More</Button>
+                        <Button disabled>Learn More</Button>
                     </div>
                 </div>
                 <div className=" flex justify-end">

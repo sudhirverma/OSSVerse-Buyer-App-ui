@@ -38,7 +38,7 @@ const product = {
   title: "OpenPilot",
   creator: "OpenFort",
   description:
-    "An open-source driving agent that performs automatic lane keeping.",
+    "An open source driving agent that performs automatic lane keeping.",
   services: [
     "ASSESSMENT",
     "ATTESTATION",
@@ -70,7 +70,6 @@ const PlaceOrderPage = () => {
   const [currentAnchor, setCurrentAnchor] = useState(0);
 
   const { data: products } = useMarketPlaceProducts(id as string, "");
-
   const {
     data: placeOrderQuote,
     mutateAsync,
@@ -86,6 +85,7 @@ const PlaceOrderPage = () => {
         provider: {
           id: products?.[0]?.provider?.id ?? "",
         },
+        context: products?.[0]?.context
       });
     }
   }, [mutateAsync, products, id, selectedServices]);

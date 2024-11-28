@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Logo from "@/components/icons/logo";
-import AddIcon from "@/components/icons/add-icon";
 import NotificationButton from "@/components/common/notification-button";
 import useAuthStore from "@/store/auth-store";
 import { useModal } from "@/store/modal-store";
@@ -32,30 +31,30 @@ const items = [
     id: 2,
     isProtected: true,
   },
-  {
-    name: "My Solution",
-    href: "/solutions",
-    id: 3,
-    isProtected: false,
-  },
-  {
-    name: "Platform",
-    href: "/platform",
-    id: 4,
-    isProtected: false,
-  },
-  {
-    name: "Resources",
-    href: "/resources",
-    id: 5,
-    isProtected: false,
-  },
-  {
-    name: "Company",
-    href: "/company",
-    id: 6,
-    isProtected: false,
-  },
+  // {
+  //   name: "My Solution",
+  //   href: "/solutions",
+  //   id: 3,
+  //   isProtected: false,
+  // },
+  // {
+  //   name: "Platform",
+  //   href: "/platform",
+  //   id: 4,
+  //   isProtected: false,
+  // },
+  // {
+  //   name: "Resources",
+  //   href: "/resources",
+  //   id: 5,
+  //   isProtected: false,
+  // },
+  // {
+  //   name: "Company",
+  //   href: "/company",
+  //   id: 6,
+  //   isProtected: false,
+  // },
 ];
 
 const NavBar = () => {
@@ -87,8 +86,8 @@ const NavBar = () => {
                 to={isRouteAvailable ? item.href : "#"}
                 key={item.id}
                 className={`p-2 transition-colors text-foreground ${isRouteAvailable
-                    ? "hover:text-accent-foreground"
-                    : "text-gray-400 cursor-not-allowed"
+                  ? "hover:text-accent-foreground"
+                  : "text-gray-400 cursor-not-allowed"
                   } ${item.href === location.pathname ? "font-bold" : ""
                   } ${item.isProtected && !isAuthenticated ? "hidden" : ""
                   }`}
@@ -129,28 +128,29 @@ const NavBar = () => {
             </nav>
           </SheetContent>
         </Sheet>
-        <form className="ml-0 mr-auto hidden xl:block flex-1 sm:flex-initial">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Global search..."
-              className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
-            />
-          </div>
-        </form>
         <div className="flex  items-center gap-4 md:ml-auto md:gap-2 lg:gap-4 ">
           <Search className="h-10 w-10 p-2 text-muted-foreground xl:hidden border rounded" />
 
-          {isAuthenticated && (
+          <form className="ml-0 mr-auto hidden xl:block flex-1 sm:flex-initial">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Global search..."
+                className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
+              />
+            </div>
+          </form>
+
+          {/* {isAuthenticated && (
             <Button variant="secondary" size="icon" className="rounded-full">
               <AddIcon className="h-5 w-5" />
             </Button>
-          )}
+          )} */}
           {isAuthenticated && <NotificationButton />}
           {!isAuthenticated && (
             <>
-              <Button>Book A Demo</Button>
+              <Button disabled>Book A Demo</Button>
               {/* <Button>Get Started</Button> */}
               {/* divider */}
               <div className="h-6 w-[1px] bg-gray-400" />
