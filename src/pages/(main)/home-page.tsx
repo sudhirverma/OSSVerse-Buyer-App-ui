@@ -5,13 +5,14 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Typography from "@/components/ui/typography";
 import { useMarketPlaceProducts } from "@/services/marketplace-service";
 import type { FC } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import MarketPlacePage from "../(dashboard)/marketplace/marketplace-page";
 import { SquareArrowOutUpRight } from "lucide-react";
 import LatestNews from "./components/LatestNews";
 import { FeatureCard } from "@/components/common/feature-card";
 import { PRODUCT_TYPE } from "@/lib/constant";
 import PagePagination from "@/components/common/page-pagination";
+import { ROUTE_PATH } from "@/routes/route-path";
 const TabItem = ({
   title,
   badge,
@@ -91,7 +92,7 @@ const HomePage: FC = () => {
             forefront of cloud and AI advancements.
           </Typography>
           <div className="flex gap-4">
-            <Button type="button">Get Started</Button>
+            <Button type="button" disabled>Get Started</Button>
             {/* <Link to={ROUTE_PATH.MARKETPLACE}>
               <Button className=" flex gap-1" type="button">
                 Explore Marketplace <ExternalLink className=" h-4 w-4" />
@@ -134,13 +135,17 @@ const HomePage: FC = () => {
             )
           )}
           <div className=" mt-6">
-            <Button>Explore Marketplace</Button>
+            <Link to={ROUTE_PATH.MARKETPLACE}>
+              <Button className=" flex gap-1" type="button">
+                Explore Marketplace
+              </Button>
+            </Link>
           </div>
         </div>
 
         <div className="flex flex-col gap-4 px-10">
           <Typography as="h2">
-            Featured Open-source Assurance Service Providers
+            Featured Open Source Assurance Service Providers
           </Typography>
           <div className="flex items-center justify-between">
 
@@ -179,7 +184,7 @@ const HomePage: FC = () => {
             )
           )}
           <div className=" mt-6">
-            <Button>Explore OASP</Button>
+            <Button>Explore Open Source Service Providers (OASP)</Button>
           </div>
         </div>
         <MarketPlacePage isHomePage={true} />

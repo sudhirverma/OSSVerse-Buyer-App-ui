@@ -42,6 +42,7 @@ export interface Item {
     price: number
   }[]
   provider?: Descriptor & { id: string }
+  context: CatalogContext
 }
 
 export interface Descriptor2 {
@@ -66,13 +67,6 @@ export interface Contact {
   phone: string
   email: string
 }
-
-
-
-
-
-
-
 
 export type MarketplaceProduct = {
   context: MarketplaceProductContext;
@@ -321,11 +315,10 @@ const aggregateProducts = (products: MarketplaceProduct, type: string) => {
   products.message.catalogs.forEach((catalog, _) => {
     catalog.message.catalog["bpp/providers"].forEach((provider, _) => {
       provider.items.forEach((item, _) => {
-        allProducts.push({ ...item, provider: { ...provider.descriptor, id: provider.id } })
+        allProducts.push({ ...item, provider: { ...provider.descriptor, id: provider.id }, context: catalog.context })
       })
     })
   })
-
   return allProducts.reduce((acc: Item[], item) => {
     const existingProduct = acc.find(p => p.descriptor.name === item.descriptor.name);
     if (existingProduct) {

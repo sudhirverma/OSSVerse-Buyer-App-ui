@@ -11,7 +11,7 @@ export type PlaceOrderQuote = {
 export type PlaceOrderQuoteContext = {
   ttl: string;
   action: string;
-  timestamp: string;
+  timestamp: Date;
   message_id: string;
   transaction_id: string;
   domain: string;
@@ -127,23 +127,11 @@ export const getData = (
   provider: Provider,
   items: Item[],
   fulfillment: QuoteMessageBodyFulfillment,
+  context: PlaceOrderQuoteContext
 ) => ({
   selectRequestDto: [
     {
-      context: {
-        domain: "Software Assurance",
-        country: "IND",
-        city: "std:080",
-        action: "search",
-        version: "1.1.0",
-        bap_id: "bap.ossverse.com",
-        bap_uri: "http://bap.ossverse.com",
-        bpp_id: "openfort-oasp.ossverse.com",
-        bpp_uri: "http://openfort-oasp.ossverse.com",
-        transaction_id: "ead489b8-81de-49a4-baf6-8d8de7eabf32",
-        message_id: "c00f97e9-3080-4e60-a4de-36b9da720de7",
-        timestamp: "2024-09-10T13:06:20.334431Z",
-      },
+      context,
       message: {
         order: {
           provider,
@@ -159,10 +147,11 @@ export const getPlaceOrderQuote = async (
   provider: Provider,
   items: Item[],
   fulfillment: QuoteMessageBodyFulfillment,
+  context: PlaceOrderQuoteContext
 ) => {
   return await httpService.post<PlaceOrderQuote[]>(
     api.placeorder.select,
-    getData(provider, items, fulfillment),
+    getData(provider, items, fulfillment, context),
   );
 };
 
@@ -171,8 +160,9 @@ export const usePlaceOrderQuote = () => {
     provider: Provider;
     items: Item[];
     fulfillment: QuoteMessageBodyFulfillment;
+    context: PlaceOrderQuoteContext;
   }>({
-    mutationFn: ({ provider, items, fulfillment }) =>
-      getPlaceOrderQuote(provider, items, fulfillment),
+    mutationFn: ({ provider, items, fulfillment, context }) =>
+      getPlaceOrderQuote(provider, items, fulfillment, context),
   });
 };
