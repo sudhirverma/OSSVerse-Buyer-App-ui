@@ -80,7 +80,7 @@ const HomePage: FC = () => {
   };
   return (
     <div>
-      <div className="flex justify-between items-center bg-[#CCCCCC] -mt-3 page-root">
+      <div className="flex justify-between items-center bg-[#d9d9d9] -mt-3 page-root">
         <div className="flex flex-col gap-7 ">
           <Typography as="h1">
             <div>Your Marketplace for Secure</div>{" "}
@@ -101,7 +101,7 @@ const HomePage: FC = () => {
           </div>
         </div>
         <img
-          src="/homepage-banner.png"
+          src="/MarketplaceServices.png"
           className=" hidden lg:block w-[625px]"
           alt="Banner"
         />
