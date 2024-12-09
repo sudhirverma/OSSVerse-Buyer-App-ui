@@ -10,7 +10,7 @@ import { ChevronDownIcon, Search } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import MarketplaceList from "../components/marketplace-list";
 import { useMarketPlaceProducts } from "@/services/marketplace-service";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,6 +55,7 @@ const MarketPlacePage = ({ isHomePage = false }: { isHomePage?: boolean }) => {
   // const { modalData, isLoading: isModalLoading } = useMarketPlaceProducts("", "OSS Model");
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState("");
 
 
   const showFilter = searchParams.get("filter") || "";
@@ -63,11 +64,20 @@ const MarketPlacePage = ({ isHomePage = false }: { isHomePage?: boolean }) => {
     projects: "OSS Project",
     "ml-models": "ML Model",
   };
+
   const { data, isLoading } = useMarketPlaceProducts(
     "",
     selectedCategory[activeTab as keyof typeof selectedCategory] ?? "",
   );
-
+  const filteredData = useMemo(() => {
+    if (!searchQuery.trim()) return data || [];
+    return (
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      data?.filter((item: any) =>
+        item.descriptor.name.toLowerCase().includes(searchQuery.toLowerCase())
+      ) || []
+    );
+  }, [searchQuery, data]);
 
   const onChange = (value: string) => {
     if (value === "") {
@@ -77,6 +87,7 @@ const MarketPlacePage = ({ isHomePage = false }: { isHomePage?: boolean }) => {
     }
     setSearchParams(searchParams);
   };
+
   const onFilterChange = (value: string) => {
     if (value) {
       searchParams.delete("filter");
@@ -90,7 +101,7 @@ const MarketPlacePage = ({ isHomePage = false }: { isHomePage?: boolean }) => {
   const [isGrid, setIsGrid] = useState(false);
   return (
     <div className="page-root flex flex-col gap-11 relative ">
-      <div className="absolute top-0 left-0 w-full h-[300px] -z-10 bg-[#CCCC] " />
+      <div className="absolute top-0 left-0 w-full h-[404px] -z-10 bg-[#CCCC] " />
       {!isHomePage && <AppBreadCrumb data={breadcrumb} />}
       <div className="flex gap-4 flex-wrap md:flex-nowrap  ">
         <H1>Explore Marketplace</H1>
@@ -102,6 +113,8 @@ const MarketPlacePage = ({ isHomePage = false }: { isHomePage?: boolean }) => {
                 type="search"
                 placeholder="Search Project/ML Model name.."
                 className="pl-8 w-full md:w-[200px] lg:w-[380px]"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             {/* <Button className="rounded-full">On-Demand Request</Button> */}
@@ -161,7 +174,7 @@ const MarketPlacePage = ({ isHomePage = false }: { isHomePage?: boolean }) => {
         {isLoading ? (
           <div>Loading...</div>
         ) : data && data.length > 0 ? (
-          <MarketplaceList showFilter={!!showFilter} products={data} />
+          <MarketplaceList showFilter={!!showFilter} products={filteredData} />
         ) : (
           <div>No data found</div>
         )}
