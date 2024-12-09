@@ -25,24 +25,25 @@ const initialFilters = {
   "TAVOSS Version": [{ name: "All TAVOSS Version", value: "all" }],
 };
 
+const defaultInitialFilters = JSON.parse(JSON.stringify(initialFilters));
+
 const MarketplaceList = ({
   showFilter,
   products,
 }: { showFilter: boolean; products: Item[] }) => {
 
-  const defaultInitialFilters = JSON.parse(JSON.stringify(initialFilters));
-
-  const [filterdata, setFilterdata] = useState(initialFilters);
-  const [activeFilters, setActiveFilters] = useState(defaultInitialFilters);
+  const [filterdata, setFilterdata] = useState(defaultInitialFilters);
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation> // Fix Me
+  const [activeFilters, setActiveFilters]: any = useState(initialFilters);
 
   useEffect(() => {
-    const updatedFilterdata = { ...initialFilters };
+    const updatedFilterdata = { ...defaultInitialFilters };
 
     products.map((product) => {
       if (product.provider?.name) {
         if (
           !updatedFilterdata.OSAP.some(
-            (item) => item.value === product.provider?.name.toLowerCase().replace(/\s+/g, "-")
+            (item: {value: string}) => item.value === product.provider?.name.toLowerCase().replace(/\s+/g, "-")
           )
         ) {
           updatedFilterdata.OSAP.push({
@@ -56,7 +57,7 @@ const MarketplaceList = ({
         product.services.map((service: { name: string }) => {
           if (
             !updatedFilterdata["Service Offered"].some(
-              (item) => item.value === service.name.toLowerCase().replace(/\s+/g, "-")
+              (item: {value: string}) => item.value === service.name.toLowerCase().replace(/\s+/g, "-")
             )
           ) {
             updatedFilterdata["Service Offered"].push({
@@ -166,7 +167,7 @@ const MarketplaceList = ({
           >
             <div className="flex bg-white justify-between items-center gap-2 border p-2 rounded">
               <span>Filter</span>
-              <Button onClick={() => setActiveFilters(defaultInitialFilters)}>
+              <Button onClick={() => setActiveFilters(initialFilters)}>
                 Reset
               </Button>
             </div>
@@ -197,7 +198,7 @@ const MarketplaceList = ({
                           className="flex flex-col gap-2 "
                         >
                           {filterdata[filter as keyof typeof filterdata].map(
-                            (filtercheckbox) => (
+                            (filtercheckbox: { value: string; name: string; }) => (
                               <div
                                 className="flex items-center p-1 gap-2"
                                 key={filtercheckbox.value}
