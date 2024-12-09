@@ -14,21 +14,11 @@ import { type OrderResponse, useMyOrders } from "@/services/myorders-service";
 import SortMenu from "../components/sort-menu";
 import { type FinalProduct, deriveData, getSpanVariant } from "@/lib/utils";
 import type { IFilterSortPager } from "@/store/data-store";
-import {
-  DEFAULT_FILTER_SORT_PAGER,
-  DEFAULT_PAGE_SIZE,
-  type VariantTypes,
-} from "@/lib/constant";
+import { DEFAULT_FILTER_SORT_PAGER, DEFAULT_PAGE_SIZE, type VariantTypes, } from "@/lib/constant";
 
 const breadcrumb = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-  },
-  {
-    title: "My Orders",
-    url: "/dashboard/orders",
-  },
+  { title: "Dashboard", url: "/dashboard" },
+  { title: "My Orders", url: "/dashboard/orders" },
 ];
 
 const TabItem = ({
@@ -57,54 +47,69 @@ const MyOrdersPage = () => {
   const { data, isLoading: _ } = useMyOrders();
   const [orders, setOrders] = useState<OrderResponse['orders'] | null>(null);
 
-
   useEffect(() => {
-    if (data) {
-      setOrders(data);
-    }
+    if (data) setOrders(data);
   }, [data]);
-
 
   if (_) { return <div>Loading...</div> }
   if (!data) { return <div>No data</div> }
   return orders && <OrdersPage data={orders} />;
+}
 
+const prepareTabsData = (data: OrderResponse["orders"]) => {
+  return data?.map((order) => {
+    const { items, state } = order.orders[0].message.responses[0].message.order;
+    return { state, count: items.length, value: state };
+  }) || [];
+}
+
+const prepareListData = (data: OrderResponse["orders"]) => {
+  return data?.map((order) => {
+    const { items, id, updated_at, created_at, state } =
+      order.orders[0].message.responses[0].message.order;
+    return items.map((item) => {
+      return {
+        item,
+        id,
+        updated_at,
+        created_at,
+        state,
+        dueDate: "2024-11-09T02:51:23.997Z",
+      };
+    });
+  }) || [];
 }
 
 const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
-
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("q") || "All";
+  const [filterSortPager, setFilterSortPager] = useState<IFilterSortPager>(DEFAULT_FILTER_SORT_PAGER);
 
-  const [filterSortPager, setFilterSortPager] = useState<IFilterSortPager>(
-    DEFAULT_FILTER_SORT_PAGER,
-  );
-
-  // const { order, sort, page, pageSize } = useDataStore(state => state.pages[ROUTE_PATH.MYORDERS].categories[activeTab]);
   const [currentData, setCurrentData] = useState<FinalProduct[] | null>(null);
   const [isGrid, setIsGrid] = useState(true);
   const showFilter = searchParams.get("filter") || "";
+  const tabsData = prepareTabsData(data);
+  const listData = prepareListData(data);
+  const totalCount = (tabsData || []).reduce((acc, item) => acc + item.count, 0);
+
+  const tabsDataArr = [{ state: "All", count: totalCount }, ...tabsData];
+
   const onChange = (value: string) => {
-    const total = tabsDataArr.find((t) => t.state === value)?.count || 0;
+    const total = tabsDataArr.find((tab) => tab.state === value)?.count || 0;
     setFilterSortPager({
       ...DEFAULT_FILTER_SORT_PAGER,
       total,
       page: 1,
       pageSize: DEFAULT_PAGE_SIZE,
     });
-    if (value === "All") {
-      searchParams.delete("q");
-    } else {
-      searchParams.set("q", value);
-    }
+    if (value === "All") searchParams.delete("q");
+    else searchParams.set("q", value);
     setSearchParams(searchParams);
   };
+
   const onFilterChange = (value: string) => {
-    if (value) {
-      searchParams.delete("filter");
-    } else {
-      searchParams.set("filter", "true");
-    }
+    if (value) searchParams.delete("filter");
+    else searchParams.set("filter", "true");
     setSearchParams(searchParams);
   };
 
@@ -113,50 +118,7 @@ const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
     setFilterSortPager({ ...DEFAULT_FILTER_SORT_PAGER, search: value });
   };
 
-  const onDisplayChange = (value: boolean) => {
-    setIsGrid(value);
-  };
-
-
-  const tabsData = data?.map((order) => {
-    const { items, state } =
-      order.orders[0].message.responses[0].message.order;
-    return {
-      state,
-      count: items.length,
-      value: state,
-    };
-  }) || [];
-
-  const listData =
-    data?.map((order) => {
-      const { items, id, updated_at, created_at, state } =
-        order.orders[0].message.responses[0].message.order;
-      return items.map((item) => {
-        return {
-          item,
-          id,
-          updated_at,
-          created_at,
-          state,
-          dueDate: "2024-11-09T02:51:23.997Z",
-        };
-      });
-    }) || [];
-  // listData = paginate(listData.filter(d => d.state === activeTab), filterSortPager.page, filterSortPager.pageSize)
-  // const allData = paginate(listData.flatMap(tab => tab), filterSortPager.page, filterSortPager.pageSize);
-  const totalCount = (tabsData || []).reduce(
-    (acc, item) => acc + item.count,
-    0,
-  );
-
-  const tabsDataArr = [
-    {
-      state: "All",
-      count: totalCount,
-    },
-    ...tabsData,
-  ];
+  const onDisplayChange = (value: boolean) => setIsGrid(value);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -173,12 +135,9 @@ const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
   useEffect(() => {
     if (data && filterSortPager && activeTab) {
       let d: FinalProduct[] = [];
-      if (activeTab === "All") {
-        d = listData.flat();
-      } else {
-        //@ts-ignore
-        d = listData.filter((d) => d.state === activeTab);
-      }
+      if (activeTab === "All") d = listData.flat();
+      //@ts-ignore
+      else d = listData.filter((d) => d.state === activeTab);
       const { currentData, finalTotalCount } = deriveData(
         d,
         filterSortPager.total,
@@ -219,9 +178,6 @@ const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
                 onChange={handleSearch}
               />
             </div>
-            {/* <Button className="rounded-full">
-                    On-Demand Request
-                </Button> */}
           </form>
         </div>
       </div>
