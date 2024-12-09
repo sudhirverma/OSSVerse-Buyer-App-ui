@@ -14,99 +14,69 @@ import { Input } from "@/components/ui/input";
 
 import type { Item } from "@/services/marketplace-service";
 import { MarketplaceCard } from "@/components/common/marketplace-card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "react-router-dom";
 import PagePagination from "@/components/common/page-pagination";
 
-const filterdata = {
-  OSAP: [
-    {
-      name: "All OSAP",
-      value: "all",
-    },
-    {
-      name: "OSAP Acme A",
-      value: "osap-acme-a",
-    },
-    {
-      name: "OSAP Acme B",
-      value: "osap-acme-b",
-    },
-    {
-      name: "OSAP Acme C",
-      value: "osap-acme-c",
-    },
-    {
-      name: "OSAP Acme D",
-      value: "osap-acme-d",
-    },
-  ],
-  "Service Offered": [
-    {
-      name: "All Service Offered",
-      value: "all",
-    },
-    {
-      name: "Assesment",
-      value: "assesment",
-    },
-    {
-      name: "Attestation",
-      value: "attestation",
-    },
-    {
-      name: "Certification",
-      value: "certification",
-    },
-    {
-      name: "Remediation",
-      value: "remediation",
-    },
-  ],
-  "TAVOSS Version": [
-    {
-      name: "All TAVOSS Version",
-      value: "all",
-    },
-    {
-      name: "ASF",
-      value: "asf",
-    },
-    {
-      name: "ISO",
-      value: "iso",
-    },
-    {
-      name: "Linux Foundation",
-      value: "linux-foundation",
-    },
-    {
-      name: "OpenSSF",
-      value: "open-ssf",
-    },
-  ],
+const initialFilters = {
+  OSAP: [{ name: "All OSAP", value: "all" }],
+  "Service Offered": [{ name: "All Service Offered", value: "all" }],
+  "TAVOSS Version": [{ name: "All TAVOSS Version", value: "all" }],
 };
 
 const MarketplaceList = ({
   showFilter,
   products,
 }: { showFilter: boolean; products: Item[] }) => {
-  const initialFilters = {
-    OSAP: [{ name: "All OSAP", value: "all" }],
-    "Service Offered": [{ name: "All Service Offered", value: "all" }],
-    "TAVOSS Version": [{ name: "All TAVOSS Version", value: "all" }],
-  };
+
+  const defaultInitialFilters = JSON.parse(JSON.stringify(initialFilters));
+
+  const [filterdata, setFilterdata] = useState(initialFilters);
+  const [activeFilters, setActiveFilters] = useState(defaultInitialFilters);
+
+  useEffect(() => {
+    const updatedFilterdata = { ...initialFilters };
+
+    products.map((product) => {
+      if (product.provider?.name) {
+        if (
+          !updatedFilterdata.OSAP.some(
+            (item) => item.value === product.provider?.name.toLowerCase().replace(/\s+/g, "-")
+          )
+        ) {
+          updatedFilterdata.OSAP.push({
+            name: product.provider.name,
+            value: product.provider.name.toLowerCase().replace(/\s+/g, "-"),
+          });
+        }
+      }
+
+      if (product.services?.length) {
+        product.services.map((service: { name: string }) => {
+          if (
+            !updatedFilterdata["Service Offered"].some(
+              (item) => item.value === service.name.toLowerCase().replace(/\s+/g, "-")
+            )
+          ) {
+            updatedFilterdata["Service Offered"].push({
+              name: service.name,
+              value: service.name.toLowerCase().replace(/\s+/g, "-"),
+            });
+          }
+        });
+      }
+    });
+    setFilterdata(updatedFilterdata);
+  }, [products]);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const featuredCurrentPage = Number(searchParams.get("mpage")) || 1;
 
-  const [activeFilters, setActiveFilters] = useState(initialFilters);
-
   const hasFilters = Object.keys(activeFilters)
     .filter((item) =>
       activeFilters[item as keyof typeof activeFilters].find(
-        (f) => f.value !== "all",
+        (f: { value: string; }) => f.value !== "all",
       ),
     ).length > 0
 
@@ -116,13 +86,13 @@ const MarketplaceList = ({
   ) => {
     if (
       activeFilters[filter as keyof typeof filterdata].find(
-        (f) => f.value === value.value,
+        (f: { value: string; }) => f.value === value.value,
       ) !== undefined
     ) {
       const newFilters = {
         ...activeFilters,
         [filter]: activeFilters[filter as keyof typeof filterdata].filter(
-          (f) => f.value !== value.value,
+          (f: { value: string; }) => f.value !== value.value,
         ),
       };
       if (newFilters[filter as keyof typeof filterdata].length === 0) {
@@ -139,7 +109,7 @@ const MarketplaceList = ({
       if (value.value !== "all") {
         newFilters[filter as keyof typeof filterdata] = newFilters[
           filter as keyof typeof filterdata
-        ].filter((f) => f.value !== "all");
+        ].filter((f: { value: string; }) => f.value !== "all");
       }
       setActiveFilters(newFilters);
     }
@@ -149,12 +119,42 @@ const MarketplaceList = ({
     searchParams.set("mpage", page.toString());
     setSearchParams(searchParams);
   };
-  const getFeaturedPageItems = products?.slice((featuredCurrentPage - 1) * 6, featuredCurrentPage * 6);
 
+  const filterProducts = (products: Item[]) => {
+    return products.filter((product) => {
+      const matchesAllFilters = Object.keys(activeFilters).every((filter) => {
+        const selectedValues = activeFilters[filter as keyof typeof activeFilters]
+          .map((item: { value: string; }) => item.value)
+          .filter((value: string) => value !== "all");
+        if (selectedValues.length === 0) return true; // No active filters for this category
+
+        // For OSAP, Service Offered, TAVOSS Version
+        if (filter === "OSAP") {
+          return selectedValues.includes(product.provider?.name.toLowerCase().replace(/\s+/g, "-"));
+        }
+        if (filter === "Service Offered") {
+          return product.services?.some((service) =>
+            selectedValues.includes(service.name.toLowerCase().replace(/\s+/g, "-"))
+          );
+        }
+        // if (filter === "TAVOSS Version") {
+        //   return selectedValues.includes(product.tavossVersion?.toLowerCase().replace(/\s+/g, "-"));
+        // }
+        return true;
+      });
+
+      return matchesAllFilters;
+    });
+  };
+
+
+  // const getFeaturedPageItems = products?.slice((featuredCurrentPage - 1) * 6, featuredCurrentPage * 6);
+  const getFeaturedPageItems = filterProducts(products).slice(
+    (featuredCurrentPage - 1) * 6,
+    featuredCurrentPage * 6
+  );
 
   const featuredPageCount = Math.ceil(products ? products?.length / 6 : 0);
-
-
 
   return (
     <div className="flex flex-col gap-9">
@@ -166,7 +166,7 @@ const MarketplaceList = ({
           >
             <div className="flex bg-white justify-between items-center gap-2 border p-2 rounded">
               <span>Filter</span>
-              <Button onClick={() => setActiveFilters(initialFilters)}>
+              <Button onClick={() => setActiveFilters(defaultInitialFilters)}>
                 Reset
               </Button>
             </div>
@@ -174,7 +174,7 @@ const MarketplaceList = ({
               return (
                 <div
                   key={filter}
-                  className="flex flex-col gap-2  border p-2 rounded "
+                  className="flex bg-white justify-between items-center gap-2 border p-2 rounded"
                 >
                   <Accordion
                     type="single"
@@ -209,7 +209,7 @@ const MarketplaceList = ({
                                     activeFilters[
                                       filter as keyof typeof filterdata
                                     ].find(
-                                      (f) => f.value === filtercheckbox.value,
+                                      (f: { value: string; }) => f.value === filtercheckbox.value,
                                     ) !== undefined
                                   }
                                   onClick={(e) => {
@@ -240,7 +240,7 @@ const MarketplaceList = ({
             {Object.keys(activeFilters)
               .filter((item) =>
                 activeFilters[item as keyof typeof activeFilters].find(
-                  (f) => f.value !== "all",
+                  (f: { value: string; }) => f.value !== "all",
                 ),
               )
               .map((filter) => {
@@ -249,13 +249,14 @@ const MarketplaceList = ({
                     <span>{filter}</span>
                     <span>
                       {activeFilters[filter as keyof typeof activeFilters]
-                        .map((f) => f.name)
+                        .map((f: { name: string; }) => f.name)
                         .join(", ")}
                     </span>
                     <Button
                       variant="ghost"
                       onClick={() =>
-                        setActiveFilters((prev) => ({
+                        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+                        setActiveFilters((prev: any) => ({
                           ...prev,
                           [filter]: [{ name: "All", value: "all" }],
                         }))
