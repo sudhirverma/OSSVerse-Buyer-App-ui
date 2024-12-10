@@ -139,9 +139,9 @@ describe("filterData", () => {
             products.length,
             "Laptop"
         );
-        expect(finalData).toHaveLength(3);
-        expect(finalData[0].item.descriptor.name).toBe("Galaxy Phone");
-        expect(finalTotalCount).toBe(3);
+        expect(finalData).toHaveLength(1);
+        expect(finalData[0].item.descriptor.name).toBe("Laptop");
+        expect(finalTotalCount).toBe(1);
     });
 
     it("returns all products when search keyword is empty", () => {
