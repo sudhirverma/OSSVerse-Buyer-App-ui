@@ -68,7 +68,6 @@ const mockOrders: FinalProduct[] = [
 ];
 describe("MyOrdersList", () => {
     it("should render the orders list", () => {
-        debugger
         render(
             <BrowserRouter>
                 <MyOrdersList
