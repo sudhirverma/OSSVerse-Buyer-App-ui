@@ -256,7 +256,7 @@ const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
           />
         </div>
       </div>
-      <div className="xl:w-[1222px] mx-auto">
+      <div className="xl:w-[1406px] mx-auto">
         {currentData && (
           <MyOrdersList
             setFilterSortPager={setFilterSortPager}

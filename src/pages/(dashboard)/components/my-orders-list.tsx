@@ -56,8 +56,8 @@ const OrderCard = ({ order }: { order: FinalProduct }) => (
 );
 
 const OrderListHeader = () => (
-  <div className="sm:w-[50rem] md:w-[60rem] xl:w-full 2xl:w-[90rem] bg-secondary rounded-lg p-4">
-    <div className="grid grid-cols-8">
+  <div className="w-full bg-secondary rounded-lg p-4">
+    <div className="grid grid-cols-8 gap-6 items-center">
       <div className="col-span-3">Order Project Name</div>
       <div>Transaction ID</div>
       <div>Assigned OASP</div>
@@ -68,8 +68,8 @@ const OrderListHeader = () => (
 );
 
 const OrderListItem = ({ order }: { order: FinalProduct }) => (
-  <Link to={`/dashboard/orders/detail/${encodeURIComponent(order?.id)}`} className="xl:w-full">
-    <Card className="sm:w-[50rem] md:w-[60rem] xl:w-full 2xl:w-[90rem] border rounded-lg">
+  <Link to={`/dashboard/orders/detail/${encodeURIComponent(order?.id)}`} className="xl:w-[1090px]">
+    <Card className="xl:w-full border rounded-lg">
       <CardContent className="text-sm space-y-2 p-4">
         <div className="grid grid-cols-8 gap-6 items-center">
           <div>
@@ -116,7 +116,7 @@ const MyOrdersList = ({ setFilterSortPager, filterSortPager, showFilter, showGri
         <div
             className={cn(`
             ${!showGrid
-                ? "flex flex-wrap gap-7 justify-center mx-auto w-full"
+                ? "flex flex-col gap-4 w-full"
                 : `grid gap-[30px] justify-center mx-auto w-full
             ${showFilter
                   ? "grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
