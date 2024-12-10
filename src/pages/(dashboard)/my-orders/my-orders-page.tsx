@@ -14,7 +14,7 @@ import { type OrderResponse, useMyOrders } from "@/services/myorders-service";
 import SortMenu from "../components/sort-menu";
 import { type FinalProduct, deriveData, getSpanVariant } from "@/lib/utils";
 import type { IFilterSortPager } from "@/store/data-store";
-import { DEFAULT_FILTER_SORT_PAGER, DEFAULT_PAGE_SIZE, type VariantTypes, } from "@/lib/constant";
+import { DEFAULT_CATEGORY_IDS, DEFAULT_FILTER_SORT_PAGER, DEFAULT_PAGE_SIZE, DEFAULT_PRODUCT_SUB_CATEOGRY_1, type VariantTypes, } from "@/lib/constant";
 
 const breadcrumb = [
   { title: "Dashboard", url: "/dashboard" },
@@ -84,7 +84,6 @@ const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("q") || "All";
   const [filterSortPager, setFilterSortPager] = useState<IFilterSortPager>(DEFAULT_FILTER_SORT_PAGER);
-
   const [currentData, setCurrentData] = useState<FinalProduct[] | null>(null);
   const [isGrid, setIsGrid] = useState(true);
   const showFilter = searchParams.get("filter") || "";
@@ -134,6 +133,37 @@ const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (data && filterSortPager && activeTab) {
+      const productSubcategory1Set = new Set<string>();
+      const categoryIdSet = new Set<string>();
+
+      data.map((orderArray) => {
+        orderArray.orders?.map((order) => {
+          order.message?.responses?.map((response) => {
+            response?.message?.order?.items?.map((item) => {
+              if (item.productSubcategory1) {
+                productSubcategory1Set.add(item.productSubcategory1);
+              }
+              if (item.category_id) {
+                categoryIdSet.add(item.category_id);
+              }
+            });
+          });
+        });
+      });
+      const productSubcategory1Array: string[] = Array.from(productSubcategory1Set);
+      const categoryIdArray: string[] = Array.from(categoryIdSet);
+
+      categoryIdArray.map((categoryId: string) => {
+        if (!DEFAULT_CATEGORY_IDS.includes(categoryId)) {
+          DEFAULT_CATEGORY_IDS.push(categoryId);
+        }
+      });
+
+      productSubcategory1Array.map((productSubcategory: string) => {
+        if (!DEFAULT_PRODUCT_SUB_CATEOGRY_1.includes(productSubcategory)) {
+          DEFAULT_PRODUCT_SUB_CATEOGRY_1.push(productSubcategory);
+        }
+      });
       let d: FinalProduct[] = [];
       if (activeTab === "All") d = listData.flat();
       //@ts-ignore
@@ -157,7 +187,6 @@ const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
       setCurrentData(currentData);
     }
   }, [data, filterSortPager, activeTab]);
-
   return (
     <div
       data-testid="my-orders-page"
@@ -232,7 +261,7 @@ const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
           <MyOrdersList
             setFilterSortPager={setFilterSortPager}
             filterSortPager={filterSortPager}
-            orders={data || []}
+            orders={currentData || []}
             showFilter={!!showFilter}
             showGrid={!!isGrid}
           />
