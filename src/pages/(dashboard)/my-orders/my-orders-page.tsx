@@ -59,7 +59,7 @@ const MyOrdersPage = () => {
 const prepareTabsData = (data: FinalProduct[] | null) => {
   if (!data) return [];
   const stateCounts: Record<string, { state: string; count: number; value: string }> = {};
-  data.forEach((order) => {
+  data.map((order) => {
     const { state } = order;
     if (stateCounts[state]) {
       stateCounts[state].count += 1;
