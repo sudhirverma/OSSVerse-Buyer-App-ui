@@ -153,7 +153,9 @@ const FilterCol = ({ filterSortPager, setFilterSortPager }: IFilterCol) => {
                                 "productSubcategory1",
                             )
                         }
-                        localData={localProductSubCategory1Filter}
+                        localData={localProductSubCategory1Filter.filter((item) =>
+                            item.toString().toLowerCase().includes(searchTerm.toLowerCase())
+                        )}
                         filterData={productSubCategory1Filter}
                         searchTerm={searchTerm}
                     />
