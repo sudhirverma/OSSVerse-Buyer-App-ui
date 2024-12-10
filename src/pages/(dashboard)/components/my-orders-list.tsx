@@ -68,7 +68,7 @@ const OrderListHeader = () => (
 );
 
 const OrderListItem = ({ order }: { order: FinalProduct }) => (
-  <Link to={`/dashboard/orders/detail/${encodeURIComponent(order?.id)}`} className="xl:w-[1090px]">
+  <Link to={`/dashboard/orders/detail/${encodeURIComponent(order?.id)}`} className="w-full">
     <Card className="xl:w-full border rounded-lg">
       <CardContent className="text-sm space-y-2 p-4">
         <div className="grid grid-cols-8 gap-6 items-center">
