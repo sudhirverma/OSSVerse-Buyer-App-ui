@@ -127,7 +127,8 @@ export const filterData = (
       d.item.descriptor.name.toLowerCase().includes(search?.toLowerCase()) && search.trim().length !== 0
     )
       hasSearch = true;
-    return hasFilterCatId || hasFilterProductSubCat1 || hasSearch;
+    if (hasSearch) return hasSearch
+    else return (hasFilterCatId || hasFilterProductSubCat1) && search.trim().length === 0;
   });
 
   // filter need to update the total

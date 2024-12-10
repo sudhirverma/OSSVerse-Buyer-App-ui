@@ -90,7 +90,6 @@ const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
   const tabsData = prepareTabsData(data);
   const listData = prepareListData(data);
   const totalCount = (tabsData || []).reduce((acc, item) => acc + item.count, 0);
-
   const tabsDataArr = [{ state: "All", count: totalCount }, ...tabsData];
 
   const onChange = (value: string) => {
@@ -202,7 +201,7 @@ const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search by Order Project name or #..."
+                placeholder="Search by Order Project name"
                 className="pl-8 w-full md:w-[200px] lg:w-[300px]"
                 onChange={handleSearch}
               />
