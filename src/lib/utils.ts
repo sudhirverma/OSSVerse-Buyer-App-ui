@@ -128,7 +128,7 @@ export const filterData = (
     )
       hasSearch = true;
     if (hasSearch) return hasSearch
-    else return (hasFilterCatId || hasFilterProductSubCat1) && search.trim().length === 0;
+    return (hasFilterCatId || hasFilterProductSubCat1) && search.trim().length === 0;
   });
 
   // filter need to update the total
