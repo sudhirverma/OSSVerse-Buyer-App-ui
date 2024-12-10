@@ -127,16 +127,16 @@ const MyOrdersList = ({ setFilterSortPager, filterSortPager, showFilter, showGri
         `)}
           >
             {!showGrid && <OrderListHeader />}
-            {orders.map((order) =>
+            {orders.map((order, index) =>
               showGrid ? (
                 <OrderCard
                   order={order}
-                  key={order.item.descriptor.name}
+                  key={`${order.id}-${index}`}
                 />
               ) : (
                 <OrderListItem
                   order={order}
-                  key={order.item.descriptor.name}
+                  key={`${order.id}-${index}`}
                 />
               )
             )}

@@ -56,11 +56,18 @@ const MyOrdersPage = () => {
   return orders && <OrdersPage data={orders} />;
 }
 
-const prepareTabsData = (data: OrderResponse["orders"]) => {
-  return data?.map((order) => {
-    const { items, state } = order.orders[0].message.responses[0].message.order;
-    return { state, count: items.length, value: state };
-  }) || [];
+const prepareTabsData = (data: FinalProduct[] | null) => {
+  if (!data) return [];
+  const stateCounts: Record<string, { state: string; count: number; value: string }> = {};
+  data.forEach((order) => {
+    const { state } = order;
+    if (stateCounts[state]) {
+      stateCounts[state].count += 1;
+    } else {
+      stateCounts[state] = { state, count: 1, value: state };
+    }
+  });
+  return Object.values(stateCounts);
 }
 
 const prepareListData = (data: OrderResponse["orders"]) => {
@@ -87,7 +94,7 @@ const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
   const [currentData, setCurrentData] = useState<FinalProduct[] | null>(null);
   const [isGrid, setIsGrid] = useState(true);
   const showFilter = searchParams.get("filter") || "";
-  const tabsData = prepareTabsData(data);
+  const tabsData = prepareTabsData(currentData);
   const listData = prepareListData(data);
   const totalCount = (tabsData || []).reduce((acc, item) => acc + item.count, 0);
   const tabsDataArr = [{ state: "All", count: totalCount }, ...tabsData];
@@ -166,7 +173,7 @@ const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
       let d: FinalProduct[] = [];
       if (activeTab === "All") d = listData.flat();
       //@ts-ignore
-      else d = listData.filter((d) => d.state === activeTab);
+      else d = listData.flat().filter((d) => d.state === activeTab);
       const { currentData, finalTotalCount } = deriveData(
         d,
         filterSortPager.total,
