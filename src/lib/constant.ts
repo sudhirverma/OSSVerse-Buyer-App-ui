@@ -34,6 +34,8 @@ export type PageSize = (typeof pageSizes)[number];
 export const SORT_MENUS: SortOption[] = ["Newest", "Due Date", "Last Update"];
 export const DEFAULT_CATEGORY_IDS: CategoryId[] = [];
 export const DEFAULT_PRODUCT_SUB_CATEOGRY_1: string[] = [];
+export const LOCAL_DEFAULT_CATEGORY_IDS: CategoryId[] = [];
+export const LOCAL_DEFAULT_PRODUCT_SUB_CATEOGRY_1: string[] = [];
 export const DEFAULT_PROVIDER: string[] = ["Openfort"];
 // export type ProductSubcategory1 = typeof DEFAULT_PRODUCT_SUB_CATEOGRY_1[number]
 

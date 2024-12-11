@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { Span } from "@/components/ui/span";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { cn, FinalProduct, getSpanVariant } from "@/lib/utils";
+import { cn, type FinalProduct, getSpanVariant } from "@/lib/utils";
 import Pager from "@/components/common/pager";
 import type { IFilterSortPager } from "@/store/data-store";
 import FilterCol from "./filter-col";

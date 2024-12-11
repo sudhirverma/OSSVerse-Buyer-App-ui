@@ -14,7 +14,7 @@ import { type OrderResponse, useMyOrders } from "@/services/myorders-service";
 import SortMenu from "../components/sort-menu";
 import { type FinalProduct, deriveData, getSpanVariant } from "@/lib/utils";
 import type { IFilterSortPager } from "@/store/data-store";
-import { DEFAULT_CATEGORY_IDS, DEFAULT_FILTER_SORT_PAGER, DEFAULT_PAGE_SIZE, DEFAULT_PRODUCT_SUB_CATEOGRY_1, type VariantTypes, } from "@/lib/constant";
+import { DEFAULT_FILTER_SORT_PAGER, DEFAULT_PAGE_SIZE, LOCAL_DEFAULT_CATEGORY_IDS, LOCAL_DEFAULT_PRODUCT_SUB_CATEOGRY_1, type VariantTypes, } from "@/lib/constant";
 
 const breadcrumb = [
   { title: "Dashboard", url: "/dashboard" },
@@ -98,7 +98,6 @@ const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
   const listData = prepareListData(data);
   const totalCount = (tabsData || []).reduce((acc, item) => acc + item.count, 0);
   const tabsDataArr = [{ state: "All", count: totalCount }, ...tabsData];
-
   const onChange = (value: string) => {
     const total = tabsDataArr.find((tab) => tab.state === value)?.count || 0;
     setFilterSortPager({
@@ -160,14 +159,14 @@ const OrdersPage = ({ data }: { data: OrderResponse['orders'] }) => {
       const categoryIdArray: string[] = Array.from(categoryIdSet);
 
       categoryIdArray.map((categoryId: string) => {
-        if (!DEFAULT_CATEGORY_IDS.includes(categoryId)) {
-          DEFAULT_CATEGORY_IDS.push(categoryId);
+        if (!LOCAL_DEFAULT_CATEGORY_IDS.includes(categoryId)) {
+          LOCAL_DEFAULT_CATEGORY_IDS.push(categoryId);
         }
       });
 
       productSubcategory1Array.map((productSubcategory: string) => {
-        if (!DEFAULT_PRODUCT_SUB_CATEOGRY_1.includes(productSubcategory)) {
-          DEFAULT_PRODUCT_SUB_CATEOGRY_1.push(productSubcategory);
+        if (!LOCAL_DEFAULT_PRODUCT_SUB_CATEOGRY_1.includes(productSubcategory)) {
+          LOCAL_DEFAULT_PRODUCT_SUB_CATEOGRY_1.push(productSubcategory);
         }
       });
       let d: FinalProduct[] = [];
