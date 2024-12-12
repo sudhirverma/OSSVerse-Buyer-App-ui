@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { PRODUCT_TYPE } from "@/lib/constant";
+import LatestNews from "@/pages/(main)/components/LatestNews";
 
 const breadcrumb = [
   {
@@ -179,6 +180,7 @@ const MarketPlacePage = ({ isHomePage = false }: { isHomePage?: boolean }) => {
           <div>No data found</div>
         )}
       </div>
+      <LatestNews />
     </div>
   );
 };
