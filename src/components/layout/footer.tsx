@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Logo from "../icons/logo";
+import Logo from "../icons/Light/logo";
 import useAuthStore from "@/store/auth-store";
 import LoginNavbar from "./login-navbar";
 import { ROUTE_PATH } from "@/routes/route-path";
